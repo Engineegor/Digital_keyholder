@@ -59,7 +59,7 @@ void setup() {
 	second_screen.add_child(&test_frame3);
 
 	Label label4(5, 5, "Hello world! 123", font5x7);
-	Serial.println(label4.text);
+	Serial.println(label4.get_text());
 
 	ui->set_screen(&second_screen);
 }
