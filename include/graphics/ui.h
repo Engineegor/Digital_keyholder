@@ -49,13 +49,15 @@ struct Label : public Element {
 	bool			redraw = false;
 	bool			negative;
 	Coordinate		pos;
-	char *			text;
 	Label(uint16_t x, uint16_t y, const char * text_ptr, fontStruct _font);
 	void 	draw(DrawArgs * args);
 	uint8_t		get_lenght();
 	Coordinate	get_size();
+	void		set_text(char * _text);
+	char *		get_text();
 
 	private:
+	char *			text;
 	fontStruct		font;
 	uint8_t			lenght;
 	Coordinate		size;
@@ -83,10 +85,11 @@ struct TextBox : Element{
 	bool			negative;
 	Coordinate		pos;
 	allignType		allign = LEFT;
-	const char *	text;
 
 	TextBox(uint16_t x, uint16_t y, const char * text_ptr, fontStruct _font, uint8_t _lenght, uint8_t _borders_h, uint8_t _borders_v);
 	void		draw(DrawArgs * args);
+	void		set_text(char * _text);
+	char *		get_text();
 	Coordinate	get_size();
 
 	private:
