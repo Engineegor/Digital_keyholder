@@ -66,6 +66,7 @@ Label::Label(uint16_t x, uint16_t y, const char * text_ptr, fontStruct _font) {
 	pos.x	= x;
 	pos.y	= y;
 	text	= (char*)malloc(strlen(text_ptr));
+	strcpy(text, text_ptr);
 	lenght	= strlen(text);
 	//snprintf(text, strlen(text_ptr), text_ptr);
 	Serial.printf("////// Inp len: %u (%u) | Text len: %u (%u) \n\r", strlen(text_ptr), sizeof(&text_ptr), strlen(text), sizeof(&text));
@@ -89,6 +90,13 @@ void		Label::draw(DrawArgs * args) {
 		}
 	}
 }
+void		Label::set_text(char * _text) {
+	if (strlen(_text) <= lenght) {
+		//memset(text, ' ', lenght);
+		strcpy(text, _text);
+	} else strncpy(text, _text, lenght);
+}
+char *		Label::get_text()	{return text;}
 uint8_t		Label::get_lenght()	{return lenght;}
 Coordinate	Label::get_size()	{return size;}
 
@@ -148,13 +156,12 @@ TextBox::TextBox(uint16_t x, uint16_t y, const char * text_ptr, fontStruct _font
 	pos.y		= y;
 	borders.x	= _borders_h;
 	borders.y	= _borders_v;
-	text		= (char*)malloc(strlen(text_ptr));
-	label 		= new Label(x + _borders_h, y + _borders_v, text, _font);
+	label 		= new Label(x + _borders_h, y + _borders_v, text_ptr, _font);
 	size.x		= label->get_size().x + borders.x * 2 + (_font.width + _font.spacing) * _lenght;
 	size.y		= label->get_size().y + borders.y * 2;
 	box			= new Frame(x, y, size.x, size.y);
 }
-void TextBox::draw(DrawArgs * args) {
+void 		TextBox::draw(DrawArgs * args)	{
 	box->draw(args);
 	DrawArgs Largs = DrawArgs{args->tgt_ui, args->offset, args->negative};
 	uint8_t delta = (box->get_size().x - 2 * borders.x) - label->get_size().x;
@@ -162,7 +169,9 @@ void TextBox::draw(DrawArgs * args) {
 	else if (allign == EDGE)	{Largs.offset.x += delta / 2;}
 	label->draw(&Largs);
 }
-Coordinate	TextBox::get_size()	{return size;}
+void 		TextBox::set_text(char * _text)	{label->set_text(_text);}
+char *		TextBox::get_text()				{return label->get_text();}
+Coordinate	TextBox::get_size()				{return size;}
 
 void Screen::add_child(Element * child) {
 	if (!initiated) {
