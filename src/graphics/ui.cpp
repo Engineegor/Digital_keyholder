@@ -42,6 +42,11 @@ void uiClass::draw_rect(uint8_t x, uint8_t y, uint8_t w, uint8_t h, bool c) {
 	draw_line(x,		y,		x,		y + h);	// left
 	draw_line(x + w,	y,		x + w,	y + h);	// right
 }
+void uiClass::fill_rect(uint8_t x, uint8_t y, uint8_t w, uint8_t h, bool c) {
+	for (int i = x; i < w; i++) {
+		for (int j = y; j < h; j++) draw_pix(i, j, c);
+	}
+}
 
 bool uiClass::ready() {return is_ready;}
 void uiClass::clean() {memset(buffer, 0, buffer_size);}
@@ -55,6 +60,61 @@ void uiClass::update_screen() {screen_ptr->draw(this);}
 void uiClass::set_screen(Screen * _screen_ptr) {
 	screen_ptr = _screen_ptr;
 	update_screen();
+}
+
+Label::Label(uint16_t x, uint16_t y, const char * text_ptr, size_t text_len) {
+	
+}
+
+Frame::Frame(uint16_t x, uint16_t y, uint16_t w, uint16_t h) {
+	pos.x	= x;
+	pos.y	= y;
+	size.x	= w;
+	size.y	= h;
+}
+void Frame::add_child(Element * child) {
+	if (!initiated) {
+		initiated = true;
+		for (uint8_t i = 0; i < FRAME_CHILD_MAX; i++) {children[i] = nullptr;}
+	}
+
+	for (uint8_t i = 0; i < FRAME_CHILD_MAX; i++) {
+		if (children[i] == child) {break;}
+		if (children[i] == nullptr) {
+			children[i] = child;
+			redraw = true;
+			break;
+		}
+	}
+}
+void Frame::remove_child(Element * child) {
+	uint8_t i = 0;
+	for (; i < FRAME_CHILD_MAX; i++) {
+		if (children[i] == child) {
+			redraw = true;
+			break;
+		}
+	}
+	i++;
+	for (; i < FRAME_CHILD_MAX; i++) {
+		if (children[i] == nullptr) {break;}
+		children[i - 1] = children[i];
+	}
+	children[i - 1] = nullptr;
+}
+void Frame::draw(DrawArgs * args) {
+	uint16_t abs_x = pos.x + args->offset.x;
+	uint16_t abs_y = pos.y + args->offset.y;
+	args->tgt_ui->draw_rect(abs_x, abs_y, size.x, size.y, !negative);
+	if (negative && size.x > 2 && size.y > 2) {
+		args->tgt_ui->fill_rect(abs_x + 1, abs_y + 1, size.x - 2, size.y - 2, negative);
+	}
+	DrawArgs cArgs = DrawArgs{args->tgt_ui, Coordinate{abs_x, abs_y}, negative};
+	for (uint8_t i = 0; i < SCREEN_CHILD_MAX; i++) {
+		if (this->children[i] == nullptr) break;
+		else this->children[i]->draw(&cArgs);
+	}
+	redraw = false;
 }
 
 void Screen::add_child(Element * child) {
@@ -96,16 +156,4 @@ void Screen::draw(uiClass * ui_ptr) {
 	}
 	ui_ptr->draw(END);
 	redraw = false;
-}
-
-Frame::Frame(uint16_t x, uint16_t y, uint16_t w, uint16_t h) {
-	pos.x	= x;
-	pos.y	= y;
-	size.x	= w;
-	size.y	= h;
-}
-void Frame::draw(DrawArgs * args) {
-	uint16_t abs_x = pos.x + args->offset.x;
-	uint16_t abs_y = pos.y + args->offset.y;
-	args->tgt_ui->draw_rect(abs_x, abs_y, size.x, size.y, true);
 }
