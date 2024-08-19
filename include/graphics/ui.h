@@ -2,15 +2,18 @@
 #define UI_H
 
 #include <Arduino.h>
+#include <string.h>
+#include <vector>
+
 #include <display/display_driver.h>
 #include <fonts/fonts.h>
-#include <string.h>
 
 #define SCREEN_CHILD_MAX	30
 #define FRAME_CHILD_MAX		10
+#define LISTBOX_CHILD_MAX	64
 
 enum drawState{START, END};
-enum allignType{LEFT, EDGE, RIGHT};
+enum allignType{ALLIGN_LEFT, ALLIGN_EDGE, ALLIGN_RIGHT};
 
 struct Element;
 struct Screen;
@@ -41,15 +44,17 @@ struct DrawArgs {
 	uiClass * tgt_ui;
 	Coordinate offset;
 	bool negative;
+	bool force;
 };
-struct Element		{virtual void draw(DrawArgs * args) = 0;};
+struct Element		{virtual void draw(DrawArgs * args) = 0; bool redraw = true;};
 
 struct Label : public Element {
 	public:
-	bool			redraw = false;
-	bool			negative;
+	bool			redraw		= true;
+	bool			negative	= false;
 	Coordinate		pos;
 	Label(uint16_t x, uint16_t y, const char * text_ptr, fontStruct _font);
+	~Label();
 	void 	draw(DrawArgs * args);
 	uint8_t		get_lenght();
 	Coordinate	get_size();
@@ -66,8 +71,9 @@ struct Label : public Element {
 struct Frame : public Element {
 	public:
 	Coordinate	pos;
+	bool		redraw		= true;
 	bool		filled		= false;
-	bool		negative;
+	bool		negative 	= false;
 	Frame(uint16_t x, uint16_t y, uint16_t w, uint16_t h, bool f = false);
 	void add_child(Element * child);
 	void remove_child(Element * child);
@@ -82,11 +88,12 @@ struct Frame : public Element {
 
 struct TextBox : Element{
 	public:
-	bool			negative;
+	bool			redraw		= true;
+	bool			negative	= false;
 	Coordinate		pos;
-	allignType		allign = LEFT;
+	allignType		allign		= ALLIGN_LEFT;
 
-	TextBox(uint16_t x, uint16_t y, const char * text_ptr, fontStruct _font, uint8_t _lenght, uint8_t _borders_h, uint8_t _borders_v);
+	TextBox(uint16_t x, uint16_t y, const char * text_ptr, fontStruct _font, uint16_t _lenght, uint8_t _borders_h, uint8_t _borders_v);
 	void		draw(DrawArgs * args);
 	void		set_text(char * _text);
 	char *		get_text();
@@ -99,13 +106,42 @@ struct TextBox : Element{
 	Frame * box;
 };
 
+struct ListBox : Element {
+	public:
+	bool	negative = false;
+
+	ListBox(uint16_t x, uint16_t y, uint16_t h, uint16_t v, fontStruct _font);
+	void	add_position(const char * text_ptr);
+	void	remove_position(uint8_t _pos);
+	void	draw(DrawArgs * args);
+	void	set_active(uint8_t _pos);
+	uint8_t	get_active();
+	uint8_t	next();
+	uint8_t	prev();
+	uint8_t	get_list_size();
+
+	private:
+	Coordinate pos;
+	Coordinate size;
+	fontStruct font;
+	std::vector<TextBox> label;
+	uint8_t active_label	= 0;
+	uint8_t	active_inscreen	= 0;
+	uint8_t max_inscreen	= 0;
+	Frame * box;
+
+	const uint8_t borders	= 2;
+	Coordinate	slider;
+};
+
 struct Screen {
 	public:
 	bool redraw = false;
-	bool negative;
+	bool negative = false;
 	void add_child(Element * child);
 	void remove_child(Element * child);
 	void draw(uiClass * ui_ptr);
+	uint8_t get_child_num();
 	
 	private:
 	bool		initiated = false;

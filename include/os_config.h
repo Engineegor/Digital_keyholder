@@ -1,0 +1,7 @@
+#pragma onse
+#include <FreeRTOSConfig.h>
+
+
+#define OS_TASK_PRIORITY_FRAMEBUFFER (configMAX_PRIORITIES - 1)
+#define OS_TASK_PRIORITY_KEYPAD	3
+#define OS_TASK_PRIORITY_MANAGER 4
