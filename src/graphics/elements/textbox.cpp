@@ -26,6 +26,6 @@ void 		TextBox::draw(DrawArgs * args)	{
 	else if (allign == ALLIGN_EDGE)	{Largs.offset.x += delta / 2;}
 	label->draw(&Largs);
 }
-void 		TextBox::set_text(char * _text)	{label->set_text(_text);}
+void 		TextBox::set_text(const char * _text)	{label->set_text(_text);}
 char *		TextBox::get_text()				{return label->get_text();}
 Coordinate	TextBox::get_size()				{return size;}

@@ -2,7 +2,6 @@
 #include <manager/view_manager.h>
 #include <controls/keys.h>
 #include <graphics/ui.h>
-
 #include <graphics/elements/elements.h>
 
 TaskHandle_t 	hTask;
@@ -10,8 +9,13 @@ TaskHandle_t 	hTask;
 Coordinate screen_size{128, 64};
 
 Screen main_screen;
-TextBox acc_label(0, 0, "ListBox test 0", font5x7, screen_size.x, 2, 2);
-ListBox acc_list(0, acc_label.get_size().y, screen_size.x, screen_size.y - acc_label.get_size().y, font5x7);
+TextBox title(0, 0, "ListBox size: 00", font5x7, screen_size.x, 2, 2);
+ListBox acc_list(0, title.get_size().y, screen_size.x, screen_size.y - title.get_size().y, font5x7);
+
+void set_title(uint8_t num) {
+	String title_text = "ListBox size: " + String(num) + " ";
+	title.set_text(title_text.c_str());
+}
 
 void views_setup(uiClass * _ui) {
 
@@ -19,9 +23,12 @@ void views_setup(uiClass * _ui) {
 		String acc_name = "Account " + String(i);
 		acc_list.add_position(acc_name.c_str());
 	}
-	acc_label.allign = ALLIGN_EDGE;
-	main_screen.add_child(&acc_label);
+
+	title.allign = ALLIGN_EDGE;
+	main_screen.add_child(&title);
 	main_screen.add_child(&acc_list);
+
+	set_title(acc_list.get_list_size());
 
 	_ui->set_screen(&main_screen);
 
@@ -30,18 +37,43 @@ void views_setup(uiClass * _ui) {
 
 void views_task(uiClass * user_interface) {
 	if (hid_check_key_state(KEY_UP) == KEYSTATE_HIT) {
-		if (acc_list.next()) {
-			Serial.printf("Pressed key %u\n\r", KEY_UP);
-			String acc_label_text = "ListBox test " + String(acc_list.get_active());
-			user_interface->update_screen();
-		}
+		Serial.printf("Pressed: KEY_UP\n\r");
+
+		String acc_name = "Account " + String(acc_list.get_list_size());
+		acc_list.add_position(acc_name.c_str());
+
+		set_title(acc_list.get_list_size());
+
+		user_interface->update_screen();
 	}
 
 	if (hid_check_key_state(KEY_DOWN) == KEYSTATE_HIT) {
-		if (acc_list.prev()) {
-			Serial.printf("Pressed key %u\n\r", KEY_DOWN);
+		Serial.printf("Pressed: KEY_DOWN\n\r");
+
+		acc_list.remove_position(acc_list.get_list_size() - 1);
+
+		set_title(acc_list.get_list_size());
+
+		user_interface->update_screen();
+	}
+
+	if (hid_check_key_state(KEY_NEXT) == KEYSTATE_HIT) {
+		if (acc_list.next()) {
+			Serial.printf("Pressed: KEY_NEXT\n\r");
+
 			String acc_label_text = "ListBox test " + String(acc_list.get_active());
+
 			user_interface->update_screen();
-		}
+		}/**/
+	}
+
+	if (hid_check_key_state(KEY_PREV) == KEYSTATE_HIT) {
+		if (acc_list.prev()) {
+			Serial.printf("Pressed: KEY_PREV\n\r");
+
+			String acc_label_text = "ListBox test " + String(acc_list.get_active());
+
+			user_interface->update_screen();
+		}/**/
 	}
 }

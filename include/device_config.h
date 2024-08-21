@@ -18,7 +18,7 @@ const gpio_num_t SWITCH_PIN		= GPIO_NUM_32;
 const keypad_definition_t HWCONF_KEYPAD = {
     {GPIO_NUM_35, KEY_UP},
     {GPIO_NUM_34, KEY_DOWN},
-/*	{GPIO_NUM_12, KEY_NEXT},
+	{GPIO_NUM_12, KEY_NEXT},
 	{GPIO_NUM_13, KEY_PREV},/**/
     {GPIO_NUM_32, KEY_OK},
 };

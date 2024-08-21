@@ -26,8 +26,8 @@ void	ListBox::draw(DrawArgs * args) {
 	for (int i = label_start; i < Label_end; i++) {
 		uint16_t curr_label_offset = i - active_label + active_inscreen;
 		Coordinate curr_label_coord;
-		curr_label_coord.x = abs.x;
-		curr_label_coord.y = abs.y + curr_label_offset * label[i].get_size().y;
+		curr_label_coord.x = abs.x + 1;
+		curr_label_coord.y = abs.y + curr_label_offset * label[i].get_size().y + 1;
 		DrawArgs cArgs = DrawArgs{args->tgt_ui, curr_label_coord, (i == active_label) ^ neg};
 		if (0 <= i && i < label.size()) {
 			label[i].draw(&cArgs);
@@ -35,21 +35,28 @@ void	ListBox::draw(DrawArgs * args) {
 	}
 
 	args->tgt_ui->draw_rect(abs.x, abs.y, size.x, size.y, !neg);
-	args->tgt_ui->draw_line(abs.x + size.x - slider_size.x - 3, abs.y, abs.x + size.x - slider_size.x - 3, abs.y + size.y - 2, !neg);
 
-	if (label.size() > 0) {
+	if (label.size() >= max_inscreen) {
+		args->tgt_ui->draw_line(abs.x + size.x - slider_size.x - 3, abs.y, abs.x + size.x - slider_size.x - 3, abs.y + size.y - 2, !neg);
 		this->calc_slider(abs);
 		args->tgt_ui->draw_rect(slider_pos.x, slider_pos.y, slider_size.x, slider_size.y, !neg);
 	}
 }
 
-void ListBox::add_position(const char * text_ptr) {
-	uint16_t labels_len = size.x - slider_size.x - 4;
+void	ListBox::add_position(const char * text_ptr) {
+	uint16_t labels_len = size.x - slider_size.x - 6;
 	TextBox new_label(1, 1, text_ptr, font, labels_len, 1, 1, true);
-	//Serial.printf("Add label [%s] (%u)\n\r", text_ptr, labels_len);
 	label.push_back(new_label);
 }
-void	ListBox::remove_position(uint8_t _pos) {if (_pos < label.size()) {label.erase(label.begin() + _pos);}}
+void	ListBox::remove_position(uint8_t _pos) {
+	if (_pos < label.size()) {
+		label.erase(label.begin() + _pos);
+		if (active_label >= label.size()) {
+			prev();
+			active_inscreen = max_active - 2;
+		}
+	}
+}
 
 bool	ListBox::next() {
 	if (active_label < label.size() - 1) {
@@ -71,6 +78,7 @@ bool	ListBox::prev() {
 void	ListBox::set_active(uint8_t _pos)	{if (_pos < label.size()) active_label = _pos;}
 uint8_t ListBox::get_active()				{return active_label;}
 uint8_t	ListBox::get_on_screen()			{return active_inscreen;}
+uint8_t	ListBox::get_list_size()			{return label.size();}
 
 void	ListBox::calc_slider(Coordinate abs) {
 	uint16_t delta = (size.y - 4) / label.size();

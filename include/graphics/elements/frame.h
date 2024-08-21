@@ -20,7 +20,6 @@ struct Frame : public Element {
 	private:
 	bool		initiated	= false;
 	Coordinate	size;
-	Element *	children[FRAME_CHILD_MAX];
 	std::vector<Element*> ch;
 };
 

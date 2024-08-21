@@ -12,7 +12,7 @@ struct Label : public Element {
 	void 		draw(DrawArgs * args);
 	uint8_t		get_lenght();
 	Coordinate	get_size();
-	void		set_text(char * _text);
+	void		set_text(const char * _text);
 	char *		get_text();
 
 	private:

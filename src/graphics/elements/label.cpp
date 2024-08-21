@@ -28,7 +28,7 @@ void Label::draw(DrawArgs * args) {
 	}
 }
 
-void Label::set_text(char * _text) {
+void Label::set_text(const char * _text) {
 	if (strlen(_text) <= lenght) {
 		strcpy(text, _text);
 	} else strncpy(text, _text, lenght);

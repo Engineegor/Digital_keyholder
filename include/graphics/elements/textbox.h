@@ -14,7 +14,7 @@ struct TextBox : Element{
 
 	TextBox(uint16_t x, uint16_t y, const char * text_ptr, fontStruct _font, uint16_t _lenght, uint8_t _borders_h, uint8_t _borders_v, bool no_borders = false);
 	void		draw(DrawArgs * args);
-	void		set_text(char * _text);
+	void		set_text(const char * _text);
 	char *		get_text();
 	Coordinate	get_size();
 

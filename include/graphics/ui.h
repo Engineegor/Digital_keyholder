@@ -8,8 +8,6 @@
 #include <fonts/fonts.h>
 #include <common.h>
 
-#define SCREEN_CHILD_MAX	30
-
 enum drawState{START, END};
 enum allignType{ALLIGN_LEFT, ALLIGN_EDGE, ALLIGN_RIGHT};
 
@@ -53,8 +51,7 @@ struct Screen {
 	uint8_t get_child_num();
 	
 	private:
-	bool		initiated = false;
-	Element *	children[SCREEN_CHILD_MAX];
+	std::vector<Element*> ch;
 };
 
 #endif //UI_H
