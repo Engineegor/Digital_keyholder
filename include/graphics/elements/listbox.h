@@ -2,6 +2,8 @@
 #define LISTBOX_H
 
 #include <graphics/ui.h>
+#include <graphics/elements/frame.h>
+#include <graphics/elements/textbox.h>
 
 struct ListBox : Element {
 	public:

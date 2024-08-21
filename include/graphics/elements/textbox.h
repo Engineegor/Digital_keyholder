@@ -3,6 +3,9 @@
 
 #include <graphics/ui.h>
 
+#include <graphics/elements/label.h>
+#include <graphics/elements/frame.h>
+
 struct TextBox : Element{
 	public:
 	bool			negative	= false;

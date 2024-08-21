@@ -11,7 +11,7 @@ Frame::Frame(uint16_t x, uint16_t y, uint16_t w, uint16_t h, bool f, bool b) {
 }
 
 void Frame::add_child(Element * child) {
-	if (!initiated) {
+	/*if (!initiated) {
 		initiated = true;
 		for (uint8_t i = 0; i < FRAME_CHILD_MAX; i++) {children[i] = nullptr;}
 	}
@@ -22,11 +22,13 @@ void Frame::add_child(Element * child) {
 			children[i]	= child;
 			break;
 		}
-	}
+	}/**/
+
+	ch.push_back(child);
 }
 
 void Frame::remove_child(Element * child) {
-	uint8_t i = 0;
+	/*uint8_t i = 0;
 	for (; i < FRAME_CHILD_MAX; i++) {
 		if (children[i] == child) {
 			break;
@@ -37,7 +39,11 @@ void Frame::remove_child(Element * child) {
 		if (children[i] == nullptr) {break;}
 		children[i - 1] = children[i];
 	}
-	children[i - 1]	= nullptr;
+	children[i - 1]	= nullptr;/**/
+
+	for (int i = 0; i < ch.size(); i++) {
+		if (ch[i] == child) ch.erase(ch.begin() + i);
+	}
 }
 
 void Frame::draw(DrawArgs * args) {
@@ -50,13 +56,15 @@ void Frame::draw(DrawArgs * args) {
 	if (size.x > 2 && size.y > 2) args->tgt_ui->fill_rect(abs_x + 1, abs_y + 1, size.x - 2, size.y - 2, filled ^ neg);
 
 	DrawArgs cArgs = DrawArgs{args->tgt_ui, Coordinate{abs_x, abs_y}, filled ^ neg};
-	for (uint8_t i = 0; i < SCREEN_CHILD_MAX; i++) {
+	/*for (uint8_t i = 0; i < SCREEN_CHILD_MAX; i++) {
 		if (this->children[i] == nullptr) break;
 		else {
 			this->children[i]->redraw = true;
 			this->children[i]->draw(&cArgs);
 		}
-	}
+	}/**/
+
+	for (auto i : ch) {i->draw(&cArgs);}
 }
 
 Coordinate	Frame::get_size() {return size;}

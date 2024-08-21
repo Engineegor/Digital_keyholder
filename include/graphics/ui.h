@@ -8,19 +8,11 @@
 #include <fonts/fonts.h>
 #include <common.h>
 
-#include <graphics/elements/label.h>
-#include <graphics/elements/frame.h>
-#include <graphics/elements/textbox.h>
-#include <graphics/elements/listbox.h>
-
 #define SCREEN_CHILD_MAX	30
-#define FRAME_CHILD_MAX		10
-#define LISTBOX_CHILD_MAX	64
 
 enum drawState{START, END};
 enum allignType{ALLIGN_LEFT, ALLIGN_EDGE, ALLIGN_RIGHT};
 
-struct Element;
 struct Screen;
 
 class uiClass {
@@ -49,6 +41,7 @@ struct DrawArgs {
 	Coordinate offset;
 	bool negative;
 };
+
 struct Element		{virtual void draw(DrawArgs * args) = 0; bool redraw = true;};
 
 struct Screen {
@@ -63,6 +56,5 @@ struct Screen {
 	bool		initiated = false;
 	Element *	children[SCREEN_CHILD_MAX];
 };
-
 
 #endif //UI_H

@@ -3,6 +3,8 @@
 #include <controls/keys.h>
 #include <graphics/ui.h>
 
+#include <graphics/elements/elements.h>
+
 TaskHandle_t 	hTask;
 
 Coordinate screen_size{128, 64};

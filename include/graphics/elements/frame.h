@@ -3,6 +3,8 @@
 
 #include <graphics/ui.h>
 
+#define FRAME_CHILD_MAX		10
+
 struct Frame : public Element {
 	public:
 	Coordinate	pos;
@@ -19,6 +21,7 @@ struct Frame : public Element {
 	bool		initiated	= false;
 	Coordinate	size;
 	Element *	children[FRAME_CHILD_MAX];
+	std::vector<Element*> ch;
 };
 
 #endif //FRAME_H
