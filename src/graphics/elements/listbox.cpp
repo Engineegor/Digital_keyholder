@@ -53,7 +53,7 @@ void	ListBox::remove_position(uint8_t _pos) {
 		label.erase(label.begin() + _pos);
 		if (active_label >= label.size()) {
 			prev();
-			active_inscreen = max_active - 2;
+			active_inscreen = max_active - 1;
 		}
 	}
 }
