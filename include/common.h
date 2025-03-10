@@ -41,4 +41,6 @@ class paramClass {
 	void	flag(bool _val)	{flag_v = _val;}
 	bool	flag()			{return flag_v;}
 };
+
+struct Coordinate	{uint16_t x, y;};
 #endif //COMMON_H
